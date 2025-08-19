@@ -1,32 +1,16 @@
 {
-  "name": "backend",
-  "version": "0.1.0",
-  "private": true,
+  "name": "marketcap-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "node index.js"
   },
   "dependencies": {
-    "@vercel/kv": "^3.0.0",
-    "axios": "^1.11.0",
-    "next": "15.4.7",
-    "pusher": "^5.2.0",
-    "pusher-js": "^8.4.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "vercel": "^46.0.2"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.4.7",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "axios": "^1.6.7",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
   }
 }
