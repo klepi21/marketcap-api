@@ -25,15 +25,15 @@ const pusher = new Pusher({
 
 let lastApiCallTime = 0;
 let apiCallsThisHour = 0;
-const startOfHour = new Date().setMinutes(0, 0, 0);
+let hourStartTime = new Date().setMinutes(0, 0, 0);
 
 async function shouldMakeApiCall() {
   const now = Date.now();
   
   // Reset hourly counter if we're in a new hour
-  if (now - startOfHour >= 3600000) {
+  if (now - hourStartTime >= 3600000) {
     apiCallsThisHour = 0;
-    startOfHour = new Date().setMinutes(0, 0, 0);
+    hourStartTime = new Date().setMinutes(0, 0, 0);
   }
 
   // Check if we're within our hourly limit
@@ -75,11 +75,7 @@ async function fetchMarketCap() {
     apiCallsThisHour++;
 
     // Fetch from CoinGecko API
-    const response = await axios.get(`${COINGECKO_API}/global`, {
-      headers: {
-        'x-cg-pro-api-key': API_KEY
-      }
-    });
+    const response = await axios.get(`${COINGECKO_API}/global`);
     
     const marketCap = response.data.data.total_market_cap.usd;
     const timestamp = Date.now();
@@ -108,7 +104,7 @@ async function fetchMarketCap() {
       return JSON.parse(cached.toString());
     }
     
-    throw error;
+    throw new Error('Failed to fetch market cap and no cache available');
   }
 }
 

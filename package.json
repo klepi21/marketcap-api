@@ -15,7 +15,8 @@
     "pusher": "^5.2.0",
     "pusher-js": "^8.4.0",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "vercel": "^46.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
