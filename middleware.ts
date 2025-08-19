@@ -2,15 +2,11 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Allow all requests to /api/marketcap
-  if (request.nextUrl.pathname.startsWith('/api/marketcap')) {
-    return NextResponse.next();
-  }
-
-  // For all other routes, proceed normally
+  // Allow all requests
   return NextResponse.next();
 }
 
+// Only run middleware on API routes
 export const config = {
-  matcher: '/api/:path*',
+  matcher: '/api/:path*'
 }
