@@ -1,38 +1,48 @@
 import { NextResponse } from 'next/server';
 import axios, { AxiosError } from 'axios';
 
-const COINGECKO_API = 'https://api.coingecko.com/api/v3';
-const API_KEY = 'CG-VqoAu8R54gsE7ZLLDxekGPvX';
+const CMC_API = 'https://pro-api.coinmarketcap.com/v1';
+const API_KEY = 'dedeeaca-864e-411f-831a-d23b379b4015';
 
-interface CoinGeckoResponse {
+interface CMCResponse {
   data: {
-    total_market_cap: {
-      usd: number;
-    };
+    total_market_cap: number;
+    total_volume_24h: number;
+    last_updated: string;
+  };
+  status: {
+    timestamp: string;
+    error_code: number;
+    error_message: string | null;
   };
 }
 
 async function fetchMarketCap() {
   try {
-    // Fetch from CoinGecko API
-    const response = await axios.get<CoinGeckoResponse>(`${COINGECKO_API}/global`, {
+    // Fetch from CoinMarketCap API
+    const response = await axios.get<CMCResponse>(`${CMC_API}/global-metrics/quotes/latest`, {
       headers: {
-        'x-cg-pro-api-key': API_KEY,
+        'X-CMC_PRO_API_KEY': API_KEY,
         'Accept': 'application/json'
       }
     });
     
-    const marketCap = response.data.data.total_market_cap.usd;
+    const marketCap = response.data.data.total_market_cap;
     const timestamp = Date.now();
     
     return {
       marketCap,
       timestamp,
-      lastUpdated: new Date(timestamp).toISOString()
+      lastUpdated: response.data.data.last_updated,
+      volume24h: response.data.data.total_volume_24h
     };
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error('Error details:', error.response?.data || error.message);
+      // If we hit rate limit, throw specific error
+      if (error.response?.status === 429) {
+        throw new Error('Rate limit exceeded');
+      }
     } else {
       console.error('Unknown error:', error);
     }
@@ -46,13 +56,14 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (error) {
     if (error instanceof AxiosError) {
+      const status = error.response?.status === 429 ? 429 : 500;
       return NextResponse.json(
         { 
           error: 'Failed to fetch market cap',
           details: error.response?.data || error.message,
           timestamp: new Date().toISOString()
         },
-        { status: 500 }
+        { status }
       );
     }
     return NextResponse.json(
