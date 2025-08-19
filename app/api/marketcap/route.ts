@@ -1,18 +1,8 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
-import Pusher from 'pusher';
 
 const COINGECKO_API = 'https://api.coingecko.com/api/v3';
 const API_KEY = 'CG-VqoAu8R54gsE7ZLLDxekGPvX';
-
-// Initialize Pusher
-const pusher = new Pusher({
-  appId: "2039169",
-  key: "f58a58a4ff460ccb28c3",
-  secret: "b5d73646014e4d1f5235",
-  cluster: "us2",
-  useTLS: true,
-});
 
 async function fetchMarketCap() {
   try {
@@ -27,16 +17,11 @@ async function fetchMarketCap() {
     const marketCap = response.data.data.total_market_cap.usd;
     const timestamp = Date.now();
     
-    const data = {
+    return {
       marketCap,
       timestamp,
       lastUpdated: new Date(timestamp).toISOString()
     };
-    
-    // Broadcast via Pusher
-    await pusher.trigger('market-cap', 'update', data);
-
-    return data;
   } catch (error: any) {
     console.error('Error details:', error.response?.data || error.message);
     throw error;
