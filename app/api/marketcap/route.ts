@@ -6,9 +6,13 @@ const API_KEY = 'dedeeaca-864e-411f-831a-d23b379b4015';
 
 interface CMCResponse {
   data: {
-    total_market_cap: number;
-    total_volume_24h: number;
-    last_updated: string;
+    quote: {
+      USD: {
+        total_market_cap: number;
+        total_volume_24h: number;
+        last_updated: string;
+      };
+    };
   };
   status: {
     timestamp: string;
@@ -27,14 +31,15 @@ async function fetchMarketCap() {
       }
     });
     
-    const marketCap = response.data.data.total_market_cap;
-    const timestamp = Date.now();
+    const marketCap = response.data.data.quote.USD.total_market_cap;
+    const volume24h = response.data.data.quote.USD.total_volume_24h;
+    const lastUpdated = response.data.data.quote.USD.last_updated;
     
     return {
       marketCap,
-      timestamp,
-      lastUpdated: response.data.data.last_updated,
-      volume24h: response.data.data.total_volume_24h
+      volume24h,
+      lastUpdated,
+      timestamp: Date.now()
     };
   } catch (error) {
     if (error instanceof AxiosError) {
